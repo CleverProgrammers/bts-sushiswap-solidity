@@ -5,9 +5,10 @@ import { Stats } from '../data/Stats.seed'
 import Header from '../components/Header'
 import LeftCard from '../components/LeftCard'
 import CoinDropdown from '../components/CoinDropdown'
-import Image from 'next/image'
 
 export default function Home() {
+  const [firstInput, setFirstInput] = useState('')
+  const [secondInput, setSecondInput] = useState('')
   const [firstDropDrown, setFirstDropDown] = useState(false)
   const [transferCoinFrom, setTransferCoinFrom] = useState({
     name: 'BitCoin',
@@ -47,7 +48,11 @@ export default function Home() {
                 <h1 className='trade'>Swap xSwap</h1>
                 <div className='transfer-container'>
                   <div className='transfer-balance'>
-                    <input className='transfer-balance-amount' />
+                    <input
+                      className='transfer-balance-amount'
+                      onChange={e => setFirstInput(e.target.value)}
+                      value={firstInput}
+                    />
                     <div className='transfer-balance-value'>$215.121</div>
                   </div>
                   <div
@@ -97,7 +102,11 @@ export default function Home() {
                 {' '}
                 <div className='transfer-container'>
                   <div className='transfer-balance'>
-                    <input className='transfer-balance-amount' />
+                    <input
+                      className='transfer-balance-amount'
+                      onChange={e => setSecondInput(e.target.value)}
+                      value={secondInput}
+                    />
                     <div className='transfer-balance-value'>$234.785</div>
                   </div>
                   <div
