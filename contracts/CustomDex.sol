@@ -7,7 +7,11 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 contract CustomToken is ERC20 {
     constructor(string memory name, string memory symbol) ERC20(name, symbol){
-        _mint(msg.sender, 100000000000000000000000 * 10 ** 18);
+
+    }
+
+    function mint(address account, uint256 amount) public {
+        _mint(account, amount);
     }
 }
 
@@ -29,6 +33,7 @@ contract CustomDex {
     constructor() {
         for (uint i=0; i<tokens.length; i++) {
             CustomToken token = new CustomToken(tokens[i], tokens[i]);
+            token.mint(address(this), 1000000000000000000000000);
             tokenInstanceMap[tokens[i]] = token;
         }
     }

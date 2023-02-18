@@ -83,6 +83,7 @@ export default function Home() {
                       firstDropDrown={firstDropDrown}
                       secondDropDown={secondDropDown}
                       setFirstBalance={setFirstBalance}
+                      setSecondBalance={setSecondBalance}
                     />
                   )}
                 </div>
@@ -139,6 +140,7 @@ export default function Home() {
                       setTransferCoinFrom={setTransferCoinFrom}
                       firstDropDrown={firstDropDrown}
                       secondDropDown={secondDropDown}
+                      setFirstBalance={setFirstBalance}
                       setSecondBalance={setSecondBalance}
                     />
                   )}
