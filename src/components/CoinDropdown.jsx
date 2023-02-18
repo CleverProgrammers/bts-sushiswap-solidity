@@ -1,16 +1,26 @@
 import React, { MouseEvent, useCallback, useEffect, useState } from 'react'
 
 import { Coins } from '../data/Coins.seed'
+import { getEthBalance, getTokenBalance } from '../../utils/queries'
 
 const CoinDropdown = ({
   setTransferCoinFrom,
   setTransferCoinTo,
   firstDropDrown,
   secondDropDown,
+  setFirstBalance,
 }) => {
-  const handleCoinSelection = item => {
+  const handleCoinSelection = async item => {
     if (firstDropDrown) {
       setTransferCoinFrom(item)
+      try {
+        if (item.value == 'ETH') {
+          const ethBalance = await getEthBalance()
+          setFirstBalance(ethBalance)
+        }
+      } catch (error) {
+        console.log(error)
+      }
       console.log(item)
     } else {
       setTransferCoinTo(item)

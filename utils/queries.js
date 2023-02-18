@@ -16,6 +16,16 @@ export async function swapEthToToken(tokenName, amount) {
   }
 }
 
+export async function getEthBalance() {
+  try {
+    const contractObj = await contract()
+    const data = await contractObj.getEthBalance()
+    return toEth(data.toString())
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 export async function hasValidAllowance(owner, tokenName, amount) {
   try {
     const contractObj = await contract()

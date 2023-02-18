@@ -9,6 +9,8 @@ import CoinDropdown from '../components/CoinDropdown'
 export default function Home() {
   const [firstInput, setFirstInput] = useState('')
   const [secondInput, setSecondInput] = useState('')
+  const [firstBalance, setFirstBalance] = useState('')
+  const [secondBalance, setSecondBalance] = useState('')
   const [firstDropDrown, setFirstDropDown] = useState(false)
   const [transferCoinFrom, setTransferCoinFrom] = useState({
     name: 'BitCoin',
@@ -70,7 +72,9 @@ export default function Home() {
                         </svg>
                       </span>
                     </div>
-                    <div className='transfer-balance-value'>Balance:0</div>
+                    <div className='transfer-balance-value'>
+                      Balance:{firstBalance || 0}
+                    </div>
                   </div>
                   {firstDropDrown && (
                     <CoinDropdown
@@ -78,6 +82,7 @@ export default function Home() {
                       setTransferCoinTo={setTransferCoinTo}
                       firstDropDrown={firstDropDrown}
                       secondDropDown={secondDropDown}
+                      setFirstBalance={setFirstBalance}
                     />
                   )}
                 </div>
@@ -110,7 +115,7 @@ export default function Home() {
                     <div className='transfer-balance-value'>$234.785</div>
                   </div>
                   <div
-                    className='transfer-balance end '
+                    className='transfer-balance end'
                     onClick={() => setSecondDropDown(prevState => !prevState)}
                   >
                     <div className='transfer-dropdown'>
