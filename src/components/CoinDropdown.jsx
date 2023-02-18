@@ -7,8 +7,8 @@ const CoinDropdown = ({
   setTransferCoinFrom,
   setTransferCoinTo,
   firstDropDrown,
-  secondDropDown,
   setFirstBalance,
+  setSecondBalance,
 }) => {
   const handleCoinSelection = async item => {
     if (firstDropDrown) {
@@ -24,6 +24,15 @@ const CoinDropdown = ({
       console.log(item)
     } else {
       setTransferCoinTo(item)
+      try {
+        if (item.value == 'ETH') {
+          const ethBalance = await getEthBalance()
+          setSecondBalance(ethBalance)
+          console.log(ethBalance)
+        }
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
 

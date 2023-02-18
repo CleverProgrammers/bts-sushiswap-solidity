@@ -129,7 +129,9 @@ export default function Home() {
                         </svg>
                       </span>
                     </div>
-                    <div className='transfer-balance-value'>Balance:0</div>
+                    <div className='transfer-balance-value'>
+                      Balance:{secondBalance || 0}
+                    </div>
                   </div>
                   {secondDropDown && (
                     <CoinDropdown
@@ -137,6 +139,7 @@ export default function Home() {
                       setTransferCoinFrom={setTransferCoinFrom}
                       firstDropDrown={firstDropDrown}
                       secondDropDown={secondDropDown}
+                      setSecondBalance={setSecondBalance}
                     />
                   )}
                 </div>
