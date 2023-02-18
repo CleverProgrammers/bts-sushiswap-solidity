@@ -1,6 +1,6 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap');
 
-$font-family: "Inter", sans-serif;
+$font-family: 'Inter', sans-serif;
 $bg-color: #000000;
 $body-color: #9b9ca7;
 $main-bg: #000000;
@@ -298,6 +298,12 @@ body {
           font-size: 1.875rem;
           font-weight: 500;
           color: #ffffff;
+          background-color: transparent;
+          border: 1px solid #9b9ca7;
+          outline: none;
+          border-radius: 10px;
+          width: 95%;
+          padding: 10px;
         }
         .transfer-balance-value {
           font-size: 0.75rem;
