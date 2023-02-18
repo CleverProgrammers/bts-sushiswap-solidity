@@ -3,6 +3,7 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 contract CustomToken is ERC20 {
     constructor(string memory name, string memory symbol) ERC20(name, symbol){
@@ -11,7 +12,9 @@ contract CustomToken is ERC20 {
 }
 
 contract CustomDex {
-    // Custom tokens to be initialiazed
+    using SafeMath for uint256;
+
+    // Custom tokens to be initialized
     string[] public tokens = ["CoinA", "CoinB", "CoinC"];
 
     // map to maintain the tokens and its instances
@@ -52,15 +55,15 @@ contract CustomDex {
 
     function swapEthToToken(string memory tokenName) public payable returns (uint256) {
         uint256 inputValue = msg.value;
-        uint256 outputValue = (inputValue / ethValue) * 10 ** tokenInstanceMap[tokenName].decimals();
+        uint256 outputValue = (inputValue.div(ethValue)).mul(10 ** tokenInstanceMap[tokenName].decimals());
         require(tokenInstanceMap[tokenName].transfer(msg.sender, outputValue));
         return outputValue;
     }
 
     function swapTokenToEth(string memory tokenName, uint256 _amount) public returns (uint256) {
         // Convert the token amount (ethValue) to exact amount (10)
-        uint256 exactAmount = _amount / 10 ** 18;
-        uint256 ethToBeTransferred = exactAmount * ethValue;
+        uint256 exactAmount = _amount.div(10 ** 18);
+        uint256 ethToBeTransferred = exactAmount.mul(ethValue);
         require(address(this).balance >= ethToBeTransferred, "Dex is running low on balance.");
 
         payable(msg.sender).transfer(ethToBeTransferred);
