@@ -6,6 +6,12 @@ import Header from '../components/Header'
 import LeftCard from '../components/LeftCard'
 import CoinDropdown from '../components/CoinDropdown'
 
+import { swapEthToToken, getEthBalance, getTokenBalance } from 'utils/queries'
+import { toEth, toWei } from 'utils/ether-utils'
+import { ethers } from 'ethers'
+
+import { useAccount } from 'wagmi'
+
 export default function Home() {
   const [firstInput, setFirstInput] = useState('')
   const [secondInput, setSecondInput] = useState('')
@@ -37,6 +43,75 @@ export default function Home() {
       setFirstDropDown(false)
     }
   }, [secondDropDown])
+
+  useEffect(() => {
+    handleOutput()
+  }, [transferCoinFrom, transferCoinTo, firstInput, secondInput])
+
+  const currentAccount = useAccount().address
+
+  const handleBalance = async item => {
+    try {
+      if (item.value === 'ETH') {
+        if (firstDropDrown) {
+          const balance = await getEthBalance(currentAccount)
+          setFirstBalance(Number(balance).toFixed(2))
+        } else if (secondDropDown) {
+          const balance = await getEthBalance(currentAccount)
+          setSecondBalance(Number(balance).toFixed(2))
+        }
+      } else {
+        if (firstDropDrown) {
+          const balance = await getTokenBalance(
+            item.backendValue,
+            currentAccount,
+          )
+
+          const fBal = ethers.utils.formatUnits(balance.toString(), 18)
+          setFirstBalance(fBal.toString())
+        } else if (secondDropDown) {
+          const balance = await getTokenBalance(
+            item.backendValue,
+            currentAccount,
+          )
+          const fbal = ethers.utils.formatUnits(balance.toString(), 18)
+          setSecondBalance(fbal.toString())
+        }
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const handleSwap = async () => {
+    try {
+      const receipt = await swapEthToToken(
+        transferCoinTo.backendValue,
+        firstInput,
+      )
+      console.log(receipt)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const handleOutput = () => {
+    try {
+      if (firstInput === '') return
+      if (transferCoinTo.value !== 'ETH' && transferCoinFrom.value === 'ETH') {
+        const output = toEth(toWei(firstInput), 14)
+        setSecondInput(Number(output).toFixed())
+      } else if (
+        transferCoinFrom.value !== 'ETH' &&
+        transferCoinTo.value === 'ETH'
+      ) {
+        const output = toEth(toWei(firstInput, 14))
+        setSecondInput(Number(output))
+      }
+    } catch (error) {
+      setSecondInput('0')
+    }
+  }
 
   return (
     <div className='wrapper'>
@@ -84,6 +159,9 @@ export default function Home() {
                       secondDropDown={secondDropDown}
                       setFirstBalance={setFirstBalance}
                       setSecondBalance={setSecondBalance}
+                      handleBalance={handleBalance}
+                      setFirstInput={setFirstInput}
+                      setSecondInput={setSecondInput}
                     />
                   )}
                 </div>
@@ -142,10 +220,18 @@ export default function Home() {
                       secondDropDown={secondDropDown}
                       setFirstBalance={setFirstBalance}
                       setSecondBalance={setSecondBalance}
+                      handleBalance={handleBalance}
+                      setFirstInput={setFirstInput}
+                      setSecondInput={setSecondInput}
                     />
                   )}
                 </div>
-                <div className='button trade-button'>Trade</div>
+                <div
+                  className='button trade-button'
+                  onClick={() => handleSwap()}
+                >
+                  Trade
+                </div>
               </div>
             </div>
           </div>
