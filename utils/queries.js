@@ -16,13 +16,30 @@ export async function swapEthToToken(tokenName, amount) {
   }
 }
 
-export async function getEthBalance() {
-  try {
-    const contractObj = await contract()
-    const data = await contractObj.getEthBalance()
-    return toEth(data.toString())
-  } catch (error) {
-    console.log(error)
+// export async function getEthBalance() {
+//   try {
+//     const contractObj = await contract()
+//     const data = await contractObj.getEthBalance()
+//     return toEth(data.toString())
+//   } catch (error) {
+//     console.log(error)
+//   }
+// }
+
+export const getEthBalance = async () => {
+  // Check if ethers is available
+  if (typeof ethers !== 'undefined') {
+    // Use the current provider (MetaMask)
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    // Get the current user's address
+    const accounts = await provider.listAccounts()
+    const userAddress = accounts[0]
+    // Get the user's balance
+    const balanceInWei = await provider.getBalance(userAddress)
+    const balanceInEth = ethers.utils.formatEther(balanceInWei)
+    return balanceInEth
+  } else {
+    throw new Error('Ethers is not available')
   }
 }
 
@@ -74,6 +91,8 @@ export async function swapTokenToToken(srcToken, destToken, amount) {
     return parseErrorMsg(e)
   }
 }
+
+const getUserEthBalance = async () => {}
 
 export async function getTokenBalance(tokenName, address) {
   const contractObj = await contract()

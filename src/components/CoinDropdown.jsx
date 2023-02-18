@@ -3,6 +3,8 @@ import React, { MouseEvent, useCallback, useEffect, useState } from 'react'
 import { toEth } from 'utils/ether-utils'
 
 import { Coins } from '../data/Coins.seed'
+import { useAccount } from 'wagmi'
+
 import {
   getEthBalance,
   getTokenBalance,
@@ -17,21 +19,27 @@ const CoinDropdown = ({
   setSecondBalance,
   secondDropDown,
 }) => {
+  const currentAccount = useAccount().address
+
   const handleBalance = async item => {
     try {
       if (item.value == 'ETH') {
         const ethBalance = await getEthBalance()
-        setFirstBalance(ethBalance)
+        console.log()
+        setFirstBalance(Number(ethBalance).toFixed(2))
+        if (secondDropDown) {
+          setSecondBalance(Number(ethBalance).toFixed(2))
+        }
       } else if (firstDropDrown && item.value !== 'ETH') {
         const tokenBalance = await getTokenBalance(
           item.backendValue,
-          '0x87Ba4176Aec8418B0DA9C434A9dE85F6DbCc5995',
+          currentAccount,
         )
         setFirstBalance(toEth(tokenBalance.toString()))
       } else if (secondDropDown && item.value !== 'ETH') {
         const tokenBalance = await getTokenBalance(
           item.backendValue,
-          '0x87Ba4176Aec8418B0DA9C434A9dE85F6DbCc5995',
+          currentAccount,
         )
         setSecondBalance(toEth(tokenBalance.toString()))
       }
