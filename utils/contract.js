@@ -9,7 +9,11 @@ export const tokenContract = async address => {
   if (ethereum) {
     const signer = provider.getSigner()
 
-    const contractReader = new ethers.Contract(address, CustomTokenABI, signer)
+    const contractReader = new ethers.Contract(
+      address,
+      CustomTokenABI.abi,
+      signer,
+    )
 
     return contractReader
   }

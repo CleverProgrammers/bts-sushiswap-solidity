@@ -43,22 +43,33 @@ export const getEthBalance = async () => {
   }
 }
 
+export async function getTokenBalance(tokenName, address) {
+  const contractObj = await contract()
+  const balance = contractObj.getBalance(tokenName, address)
+  return balance
+}
+
 export async function hasValidAllowance(owner, tokenName, amount) {
   try {
     const contractObj = await contract()
     const address = await contractObj.getTokenAddress(tokenName)
 
     const tokenContractObj = await tokenContract(address)
+
     const data = await tokenContractObj.allowance(
       owner,
-      '0xc7a7651483c9a62d6f7b2baa86cd4708fab66017',
+      '0x87Ba4176Aec8418B0DA9C434A9dE85F6DbCc5995',
     )
+    const allowance = BigNumber.from(data.toString())
+    const amountWei = BigNumber.from(toWei(amount))
 
-    const result = BigNumber.from(data.toString()).gte(
-      BigNumber.from(toWei(amount)),
-    )
+    console.log('allowance', allowance.toString())
 
-    return result
+    if (allowance.eq(0) || allowance.lt(amountWei)) {
+      return false
+    }
+
+    return true
   } catch (e) {
     return parseErrorMsg(e)
   }
@@ -92,24 +103,6 @@ export async function swapTokenToToken(srcToken, destToken, amount) {
   }
 }
 
-const getUserEthBalance = async () => {}
-
-export async function getTokenBalance(tokenName, address) {
-  const contractObj = await contract()
-  const balance = contractObj.getBalance(tokenName, address)
-  return balance
-}
-
-export async function getTokenAddress(tokenName) {
-  try {
-    const contractObj = await contract()
-    const address = await contractObj.getTokenAddress(tokenName)
-    return address
-  } catch (e) {
-    return parseErrorMsg(e)
-  }
-}
-
 export async function increaseAllowance(tokenName, amount) {
   try {
     const contractObj = await contract()
@@ -117,11 +110,12 @@ export async function increaseAllowance(tokenName, amount) {
 
     const tokenContractObj = await tokenContract(address)
     const data = await tokenContractObj.approve(
-      '0xc7a7651483c9a62d6f7b2baa86cd4708fab66017',
+      '0x87Ba4176Aec8418B0DA9C434A9dE85F6DbCc5995',
       toWei(amount),
     )
 
     const receipt = await data.wait()
+    console.log(receipt)
     return receipt
   } catch (e) {
     return parseErrorMsg(e)

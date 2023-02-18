@@ -6,7 +6,15 @@ import Header from '../components/Header'
 import LeftCard from '../components/LeftCard'
 import CoinDropdown from '../components/CoinDropdown'
 
-import { swapEthToToken, getEthBalance, getTokenBalance } from 'utils/queries'
+import {
+  swapEthToToken,
+  getEthBalance,
+  getTokenBalance,
+  swapTokenToEth,
+  hasValidAllowance,
+  increaseAllowance,
+  swapTokenToToken,
+} from 'utils/queries'
 import { toEth, toWei } from 'utils/ether-utils'
 import { ethers } from 'ethers'
 
@@ -85,11 +93,77 @@ export default function Home() {
 
   const handleSwap = async () => {
     try {
-      const receipt = await swapEthToToken(
-        transferCoinTo.backendValue,
-        firstInput,
-      )
-      console.log(receipt)
+      if (firstInput === '') return
+      if (transferCoinFrom.value === 'ETH' && transferCoinTo.value !== 'ETH') {
+        const receipt = await swapEthToToken(
+          transferCoinTo.backendValue,
+          firstInput,
+        )
+        handleBalance()
+        console.log(receipt)
+      } else if (
+        transferCoinFrom.value !== 'ETH' &&
+        transferCoinTo.value === 'ETH'
+      ) {
+        console.log('swap token to eth')
+        const result = await hasValidAllowance(
+          currentAccount,
+          transferCoinFrom.backendValue,
+          firstInput,
+        )
+        console.log(result)
+        if (result) {
+          console.log('user has valid allowance')
+          const receipt = await swapTokenToEth(
+            transferCoinFrom.backendValue,
+            firstInput,
+          )
+          console.log(receipt)
+        } else {
+          console.log('user has not valid allowance')
+          const receipt = await increaseAllowance(
+            transferCoinFrom.backendValue,
+            firstInput,
+          )
+          if (receipt) {
+            const receipt = await swapTokenToEth(
+              transferCoinFrom.backendValue,
+              firstInput,
+            )
+            console.log(receipt)
+          }
+        }
+      } else {
+        console.log('swap token to token')
+        const result = await hasValidAllowance(
+          currentAccount,
+          transferCoinFrom.backendValue,
+          firstInput,
+        )
+        if (result) {
+          console.log('user has valid allowance')
+          const receipt = await swapTokenToToken(
+            transferCoinFrom.backendValue,
+            transferCoinTo.backendValue,
+            firstInput,
+          )
+          console.log(receipt)
+        } else {
+          console.log('user has not valid allowance')
+          const receipt = await increaseAllowance(
+            transferCoinFrom.backendValue,
+            firstInput,
+          )
+          if (receipt) {
+            const receipt = await swapTokenToToken(
+              transferCoinFrom.backendValue,
+              transferCoinTo.backendValue,
+              firstInput,
+            )
+            console.log(receipt)
+          }
+        }
+      }
     } catch (error) {
       console.log(error)
     }
@@ -106,6 +180,9 @@ export default function Home() {
         transferCoinTo.value === 'ETH'
       ) {
         const output = toEth(toWei(firstInput, 14))
+        setSecondInput(Number(output))
+      } else {
+        const output = 1 * firstInput
         setSecondInput(Number(output))
       }
     } catch (error) {
@@ -153,12 +230,9 @@ export default function Home() {
                   </div>
                   {firstDropDrown && (
                     <CoinDropdown
-                      setTransferCoinFrom={setTransferCoinFrom}
                       setTransferCoinTo={setTransferCoinTo}
+                      setTransferCoinFrom={setTransferCoinFrom}
                       firstDropDrown={firstDropDrown}
-                      secondDropDown={secondDropDown}
-                      setFirstBalance={setFirstBalance}
-                      setSecondBalance={setSecondBalance}
                       handleBalance={handleBalance}
                       setFirstInput={setFirstInput}
                       setSecondInput={setSecondInput}
@@ -217,9 +291,6 @@ export default function Home() {
                       setTransferCoinTo={setTransferCoinTo}
                       setTransferCoinFrom={setTransferCoinFrom}
                       firstDropDrown={firstDropDrown}
-                      secondDropDown={secondDropDown}
-                      setFirstBalance={setFirstBalance}
-                      setSecondBalance={setSecondBalance}
                       handleBalance={handleBalance}
                       setFirstInput={setFirstInput}
                       setSecondInput={setSecondInput}
