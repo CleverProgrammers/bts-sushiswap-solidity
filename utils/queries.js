@@ -16,16 +16,6 @@ export async function swapEthToToken(tokenName, amount) {
   }
 }
 
-// export async function getEthBalance() {
-//   try {
-//     const contractObj = await contract()
-//     const data = await contractObj.getEthBalance()
-//     return toEth(data.toString())
-//   } catch (error) {
-//     console.log(error)
-//   }
-// }
-
 export const getEthBalance = async () => {
   // Check if ethers is available
   if (typeof ethers !== 'undefined') {
@@ -62,8 +52,6 @@ export async function hasValidAllowance(owner, tokenName, amount) {
     )
     const allowance = BigNumber.from(data.toString())
     const amountWei = BigNumber.from(toWei(amount))
-
-    console.log('allowance', allowance.toString())
 
     if (allowance.eq(0) || allowance.lt(amountWei)) {
       return false
@@ -115,7 +103,6 @@ export async function increaseAllowance(tokenName, amount) {
     )
 
     const receipt = await data.wait()
-    console.log(receipt)
     return receipt
   } catch (e) {
     return parseErrorMsg(e)

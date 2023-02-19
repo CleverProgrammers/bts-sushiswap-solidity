@@ -1,5 +1,4 @@
-import Head from 'next/head'
-import React, { MouseEvent, useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { Stats } from '../data/Stats.seed'
 import Header from '../components/Header'
@@ -99,13 +98,11 @@ export default function Home() {
           transferCoinTo.backendValue,
           firstInput,
         )
-        handleBalance()
         console.log(receipt)
       } else if (
         transferCoinFrom.value !== 'ETH' &&
         transferCoinTo.value === 'ETH'
       ) {
-        console.log('swap token to eth')
         const result = await hasValidAllowance(
           currentAccount,
           transferCoinFrom.backendValue,
@@ -113,14 +110,11 @@ export default function Home() {
         )
         console.log(result)
         if (result) {
-          console.log('user has valid allowance')
           const receipt = await swapTokenToEth(
             transferCoinFrom.backendValue,
             firstInput,
           )
-          console.log(receipt)
         } else {
-          console.log('user has not valid allowance')
           const receipt = await increaseAllowance(
             transferCoinFrom.backendValue,
             firstInput,
@@ -130,26 +124,25 @@ export default function Home() {
               transferCoinFrom.backendValue,
               firstInput,
             )
+
             console.log(receipt)
           }
         }
       } else {
-        console.log('swap token to token')
         const result = await hasValidAllowance(
           currentAccount,
           transferCoinFrom.backendValue,
           firstInput,
         )
         if (result) {
-          console.log('user has valid allowance')
           const receipt = await swapTokenToToken(
             transferCoinFrom.backendValue,
             transferCoinTo.backendValue,
             firstInput,
           )
+
           console.log(receipt)
         } else {
-          console.log('user has not valid allowance')
           const receipt = await increaseAllowance(
             transferCoinFrom.backendValue,
             firstInput,
@@ -160,6 +153,7 @@ export default function Home() {
               transferCoinTo.backendValue,
               firstInput,
             )
+
             console.log(receipt)
           }
         }
